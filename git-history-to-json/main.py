@@ -103,7 +103,7 @@ def git_show(git_dir, since, until):
 
 
 def git_history_to_json(args):
-    data = git_show(args.git_dir, args.since)
+    data = git_show(args.git_dir, args.since, args.until)
 
     logger.info("Writing JSON output to: %s" % args.json_fn)
     with open(args.json_fn, "w") as f:
