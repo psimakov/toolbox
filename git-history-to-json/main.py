@@ -22,13 +22,13 @@
     
         cd ~/
         mkdir -p ~/work/projects/tmp/
+
         git clone https://github.com/psimakov/toolbox.git
         git clone https://github.com/openai/openai-cookbook
-        cd openai-cookbook
 
         python3 \
-            ../toolbox/git-history-to-json/main.py \
-            --git-dir "./.git" \
+            ./toolbox/git-history-to-json/main.py \
+            --git-dir "./openai-cookbook/.git" \
             --since "2025-06-21 00:00:00" \
             --until "2025-06-27 23:59:59" \
             --json_fn "weekly-grounding-data_2027-06-27.json"
