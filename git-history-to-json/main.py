@@ -38,6 +38,7 @@
 import argparse
 import json
 import logging
+import subprocess
 
 
 logger = logging.getLogger(__name__)
@@ -69,7 +70,7 @@ def parse_args():
 
 def git_commit_hashes(git_dir, since, until):
     logger.info("Working with git dir: %s" % git_dir)
-    logger.info("Considering changes: since '%s', until '%s'.: %s" % (since, until))
+    logger.info("Considering changes: since '%s', until '%s'." % (since, until))
     result = runInShell(
         ["git", "--git-dir", git_dir, "log", "--since", since, "--until", until, "--pretty=format:%H"]
     )
