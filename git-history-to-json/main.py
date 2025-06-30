@@ -42,6 +42,10 @@ import subprocess
 
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+logger.addHandler(console_handler)
 
 
 def runInShell(cmd):
@@ -112,8 +116,6 @@ def git_history_to_json(args):
 
 
 if __name__ == "__main__":
-    logger.setLevel(logging.DEBUG)
-
     logger.info("\nSTARTED: %s" % __file__)
     git_history_to_json(parse_args())
     logger.info("COMPLETED: %s\n" % __file__)
