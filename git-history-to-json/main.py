@@ -82,16 +82,17 @@ def git_commit_hashes(git_dir, revision_range, since, until):
     
     cmd = ["git", "--git-dir", git_dir, "log"]
 
-    if revision_range is not none:
-        cms.append(revision_range)
+    if revision_range is not None:
+        cmd.append(revision_range)
     if since is not None:
-        cms.append("--since")
-        cms.append(since)
+        cmd.append("--since")
+        cmd.append(since)
     if until is not None:
-        cms.append("--until")
-        cms.append(until)
-    cms.append("--pretty=format:%H")
+        cmd.append("--until")
+        cmd.append(until)
+    cmd.append("--pretty=format:%H")
 
+    logger.info("Executing: %s" % " ".join(cmd))
     result = runInShell(cmd)
     return result.strip().split("\n")
 
