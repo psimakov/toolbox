@@ -61,6 +61,10 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--git-dir", type=str, help="Folder to run git commands in.")
+
+    parser.add_argument(
+        "--revision-range", type=str, help="Expression to pass into 'git log [<revision-range>]' argument."
+    )
     parser.add_argument(
         "--since", type=str, help="Expression to pass into 'git log --since=\"\"' option."
     )
@@ -72,17 +76,28 @@ def parse_args():
     return parser.parse_args()
 
 
-def git_commit_hashes(git_dir, since, until):
+def git_commit_hashes(git_dir, revision_range, since, until):
     logger.info("Working with git dir: %s" % git_dir)
     logger.info("Considering changes: since '%s', until '%s'." % (since, until))
-    result = runInShell(
-        ["git", "--git-dir", git_dir, "log", "--since", since, "--until", until, "--pretty=format:%H"]
-    )
+    
+    cmd = ["git", "--git-dir", git_dir, "log"]
+
+    if revision_range is not none:
+        cms.append(revision_range)
+    if since is not None:
+        cms.append("--since")
+        cms.append(since)
+    if until is not None:
+        cms.append("--until")
+        cms.append(until)
+    cms.append("--pretty=format:%H")
+
+    result = runInShell(cmd)
     return result.strip().split("\n")
 
 
-def git_show(git_dir, since, until):
-    commit_hashes = git_commit_hashes(git_dir, since, until)
+def git_show(git_dir, revision_range, since, until):
+    commit_hashes = git_commit_hashes(git_dir, revision_range, since, until)
     logger.info("Collected commit hashes: %s" % len(commit_hashes))
 
     commit_data = []
@@ -108,7 +123,7 @@ def git_show(git_dir, since, until):
 
 
 def git_history_to_json(args):
-    data = git_show(args.git_dir, args.since, args.until)
+    data = git_show(args.git_dir, args.revision_range, args.since, args.until)
 
     logger.info("Writing JSON output to: %s" % args.json_fn)
     with open(args.json_fn, "w") as f:
