@@ -31,7 +31,7 @@
             --git-dir "./openai-cookbook/.git" \
             --since "2025-06-21 00:00:00" \
             --until "2025-06-27 23:59:59" \
-            --json_fn "weekly-grounding-data_2027-06-27.json"
+            --json-fn "weekly-grounding-data_2027-06-27.json"
 
 """
 
@@ -71,7 +71,7 @@ def parse_args():
     parser.add_argument(
         "--until", type=str, help="Expression to pass into 'git log --until=\"\"' option."
     )
-    parser.add_argument("--json_fn", type=str, help="Name of JSON file to output.")
+    parser.add_argument("--json-fn", type=str, help="Name of JSON file to output.")
 
     return parser.parse_args()
 
