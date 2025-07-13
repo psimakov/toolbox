@@ -63,13 +63,19 @@ def parse_args():
     parser.add_argument("--git-dir", type=str, help="Folder to run git commands in.")
 
     parser.add_argument(
-        "--revision-range", type=str, help="Expression to pass into 'git log [<revision-range>]' argument."
+        "--revision-range",
+        type=str,
+        help="Expression to pass into 'git log [<revision-range>]' argument.",
     )
     parser.add_argument(
-        "--since", type=str, help="Expression to pass into 'git log --since=\"\"' option."
+        "--since",
+        type=str,
+        help="Expression to pass into 'git log --since=\"\"' option.",
     )
     parser.add_argument(
-        "--until", type=str, help="Expression to pass into 'git log --until=\"\"' option."
+        "--until",
+        type=str,
+        help="Expression to pass into 'git log --until=\"\"' option.",
     )
     parser.add_argument("--json-fn", type=str, help="Name of JSON file to output.")
 
@@ -79,7 +85,7 @@ def parse_args():
 def git_commit_hashes(git_dir, revision_range, since, until):
     logger.info("Working with git dir: %s" % git_dir)
     logger.info("Considering changes: since '%s', until '%s'." % (since, until))
-    
+
     cmd = ["git", "--git-dir", git_dir, "log"]
 
     if revision_range is not None:
