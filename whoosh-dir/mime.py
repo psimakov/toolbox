@@ -20,7 +20,7 @@ SKIP_FOLDERS = {'.git', '__pycache__', '.venv', '.idea'}
 TEXT_EXTENSIONS = {
     # General text and documentation
     '.txt', '.md', '.markdown', '.rst', '.log', '.ini', '.cfg', '.conf', '.properties',
-    '.nfo', '.readme',
+    '.nfo', '.readme', '.pdf',
 
     # Source code files
     '.py', '.java', '.c', '.cpp', '.h', '.hpp', '.cs', '.js', '.ts', '.jsx', '.tsx',
@@ -31,7 +31,7 @@ TEXT_EXTENSIONS = {
     # Web and templating
     '.html', '.htm', '.css', '.scss', '.sass', '.less', '.xml', '.xhtml', '.vue', '.ejs',
     '.twig', '.jinja', '.mustache', '.hbs', '.handlebars', '.liquid', '.slim', '.tmpl',
-    '.template', '.tpl', '.erb',
+    '.template', '.tpl', '.erb', '.svg',
 
     # Config, serialization, and data
     '.json', '.yaml', '.yml', '.toml', '.env', '.csv', '.tsv', '.ndjson', '.avsc', '.proto', '.puml',

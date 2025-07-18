@@ -73,6 +73,9 @@ def create_index(index_dir, docs_dir):
 
     logger.info(f"Indexing: {docs_dir}")
     for file in Path(docs_dir).rglob("*"):
+        if not file.is_file():
+            continue
+        
         if any(part in mime.SKIP_FOLDERS for part in file.parts):
             folders_skipped+= 1
             continue
