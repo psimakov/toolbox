@@ -1,6 +1,6 @@
 #
 # How to run:
-#   index.sh ~/
+#   index.sh --index_dir "./my_secret_git_repo"
 #
 
 set -e
@@ -18,6 +18,6 @@ fi
     ./main.py \
     --data_dir ./whoosh_env \
     --do_index \
-    --index_dir "$1"
+    $*
 
 popd

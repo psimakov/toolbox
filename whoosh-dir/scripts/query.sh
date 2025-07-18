@@ -1,6 +1,6 @@
 #
 # How to run:
-#   query.sh ~/ "API_KEY="
+#   query.sh --query_text "Ultimate Question of Life, the Universe, and Everything"
 #
 
 set -e
@@ -13,6 +13,6 @@ pushd "$DIR/.."
     ./main.py \
     --data_dir ./whoosh_env \
     --do_query \
-    --query_text "$1"
+    $*
 
 popd
