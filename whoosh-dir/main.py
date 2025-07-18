@@ -20,8 +20,10 @@ import mime
 import argparse
 import logging
 import os
-import shutil
 from pathlib import Path
+import shutil
+import time
+
 from whoosh.index import create_in, open_dir
 from whoosh.fields import Schema, TEXT, ID
 from whoosh.qparser import QueryParser
@@ -147,7 +149,17 @@ def main(args):
     logger.info("Nothing to do.")
 
 
+def report_duration(start_time):
+    elapsed = time.time() - start_time
+    hours, remainder = divmod(int(elapsed), 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    logger.info(f"Elapsed Time: {hours}h {minutes}m {seconds}s")
+
+
 if __name__ == "__main__":
     logger.info("STARTED")
+    start_time = time.time()
     main(parseargs())
+    report_duration(start_time)
     logger.info("COMPLETED")
