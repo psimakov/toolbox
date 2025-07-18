@@ -18,6 +18,6 @@ fi
     ./main.py \
     --data_dir ./whoosh_env \
     --do_index \
-    $*
+    $@
 
 popd
