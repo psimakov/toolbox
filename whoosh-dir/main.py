@@ -56,7 +56,7 @@ def create_index(index_dir, docs_dir):
     indexed = 0
     not_text = 0
     too_large = 0
-    folders_skipped = 0
+    excluded = 0
     errors = 0
 
     not_text_ext = {}
@@ -67,21 +67,21 @@ def create_index(index_dir, docs_dir):
             f"indexed: {indexed}, " +
             f"not text: {not_text}, " +
             f"too large: {too_large}, " +
-            f"errors: {errors}, " + 
-            f"folders skipped: {folders_skipped}"
+            f"excluded: {excluded}, " + 
+            f"errors: {errors}"
         )
 
-    logger.info(f"Indexing: {docs_dir}")
+    logger.info(f"Looking for files in: {docs_dir}")
     for file in Path(docs_dir).rglob("*"):
         if not file.is_file():
             continue
         
         if any(part in mime.SKIP_FOLDERS for part in file.parts):
-            folders_skipped+= 1
+            excluded+= 1
             continue
         
         if (indexed + not_text + too_large + errors) % 1000 == 0:
-            progress("Indexing progress")
+            progress("\tProgress")
 
         if file.suffix.lower() not in mime.TEXT_EXTENSIONS:
             not_text += 1
@@ -97,6 +97,8 @@ def create_index(index_dir, docs_dir):
         except Exception as e:
             print(f"Error in {file}: {e}")
             errors += 1
+
+    logger.info(f"Writing index...")
 
     writer.commit()
     progress(f"Indexing completed")
