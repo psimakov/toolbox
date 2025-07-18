@@ -27,6 +27,7 @@ import time
 from whoosh.index import create_in, open_dir
 from whoosh.fields import Schema, TEXT, ID
 from whoosh.qparser import QueryParser
+from whoosh import highlight
 
 
 logger = logging.getLogger(__name__)
@@ -37,10 +38,12 @@ logger.addHandler(console_handler)
 
 MAX_SIZE = 5 * 1024 * 1024  # 5MB
 
-CLI_BLUE = "\033[1;34m"
-CLI_RED = "\033[1;31m"
-CLI_GREEN = "\033[1;32m"
-CLI_NC = "\033[0m"
+
+class PlainFormatter(highlight.Formatter):
+    """Formatter that returns plain text with matched terms in brackets."""
+
+    def format_token(self, text, token, replace=False):
+        return highlight.get_text(text, token, replace)
 
 
 def create_index(index_dir, docs_dir):
@@ -63,23 +66,23 @@ def create_index(index_dir, docs_dir):
 
     def progress(caption):
         logger.info(
-            f"{caption}: " + 
-            f"indexed: {indexed}, " +
-            f"not text: {not_text}, " +
-            f"too large: {too_large}, " +
-            f"excluded: {excluded}, " + 
-            f"errors: {errors}"
+            f"{caption}: "
+            + f"indexed: {indexed}, "
+            + f"not text: {not_text}, "
+            + f"too large: {too_large}, "
+            + f"excluded: {excluded}, "
+            + f"errors: {errors}"
         )
 
     logger.info(f"Looking for files in: {docs_dir}")
     for file in Path(docs_dir).rglob("*"):
         if not file.is_file():
             continue
-        
+
         if any(part in mime.SKIP_FOLDERS for part in file.parts):
-            excluded+= 1
+            excluded += 1
             continue
-        
+
         if (indexed + not_text + too_large + errors) % 1000 == 0:
             progress("\tProgress")
 
@@ -95,7 +98,7 @@ def create_index(index_dir, docs_dir):
             writer.add_document(path=str(file), content=text)
             indexed += 1
         except Exception as e:
-            print(f"Error in {file}: {e}")
+            logger.error(f"Error in {file}: {e}")
             errors += 1
 
     logger.info(f"Writing index...")
@@ -105,22 +108,31 @@ def create_index(index_dir, docs_dir):
     logger.info(f"All non-text file extensions: {not_text_ext.keys()}")
 
 
-def search_index(index_dir, query_str, limit):
+def search_index(index_dir, query_str, limit, query_highlight):
     logger.info(f"Using index at: {index_dir}")
     ix = open_dir(index_dir)
     with ix.searcher() as searcher:
-        print(CLI_RED, f"Searching for: {query_str}", CLI_NC)
+        logger.info(f"Searching for: {query_str}\n")
 
         parser = QueryParser("content", schema=ix.schema)
         query = parser.parse(query_str)
-        results = searcher.search(query, limit=limit)
 
-        print(CLI_RED, f"Ready: results: {len(results)}, limit: {limit}", CLI_NC)
-        for hit in results:
-            print(CLI_GREEN, f"\nScore: {hit.score:.3f}", CLI_NC)
-            print(
-                CLI_BLUE, f"\n{hit['path']}\n", CLI_NC, f"{hit.highlights('content')}"
-            )
+        results = searcher.search(query, limit=limit)
+        if not query_highlight:
+            results.formatter = PlainFormatter()
+
+        logger.info(f"Ready: results: {len(results)}, limit: {limit}\n")
+        for index, hit in enumerate(results):
+            logger.info(f"# Result {index} (score {hit.score:.3f})")
+            
+            path = hit['path']
+            if path:
+                logger.info(f"File: {path}\n")
+            
+            content = hit.highlights('content')
+            if content:
+                logger.info(f"Excerpt: {content}")
+            logger.info(f"")
 
 
 def parseargs():
@@ -136,6 +148,11 @@ def parseargs():
     parser.add_argument("--do_query", action="store_true", help="Perform query")
     parser.add_argument("--query_text", help="Search query string")
     parser.add_argument(
+        "--query_highlight",
+        default=False,
+        help="Highlight matched terms in the query string",
+    )
+    parser.add_argument(
         "--query_limit", default=10, help="Maximum number of results to return"
     )
 
@@ -148,7 +165,12 @@ def main(args):
         return
 
     if args.do_query:
-        search_index(args.data_dir, args.query_text, args.query_limit)
+        search_index(
+            args.data_dir,
+            args.query_text,
+            int(args.query_limit),
+            args.query_highlight,
+        )
         return
 
     logger.info("Nothing to do.")
