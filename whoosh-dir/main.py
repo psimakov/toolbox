@@ -97,7 +97,8 @@ def create_index(index_base_dir, ns, docs_dir):
             continue
         try:
             text = file.read_text(encoding="utf-8", errors="ignore")
-            writer.add_document(path=str(file), content=text)
+            relative_path = os.path.relpath(file, docs_dir)
+            writer.add_document(path=relative_path, content=text)
             indexed += 1
         except Exception as e:
             logger.error(f"Error in {file}: {e}")
