@@ -46,7 +46,7 @@ class PlainFormatter(highlight.Formatter):
         return highlight.get_text(text, token, replace)
 
 
-def create_index(ns, index_base_dir, docs_dir):
+def create_index(index_base_dir, ns, docs_dir):
     index_dir = os.path.join(index_base_dir, ns)
     logger.info(f"Building index at: {index_dir}")
 
@@ -110,7 +110,7 @@ def create_index(ns, index_base_dir, docs_dir):
     logger.info(f"All non-text file extensions: {not_text_ext.keys()}")
 
 
-def search_index(index_base_dir, query_str, limit, query_highlight):
+def search_index(index_base_dir, ns, query_str, limit, query_highlight):
     index_dir = os.path.join(index_base_dir, ns)
     logger.info(f"Querying index at: {index_dir}")
 
@@ -169,7 +169,7 @@ def main(args):
         assert args.ns, "--ns required"
         assert args.data_dir, "--data_dir required"
         assert args.data_dir, "--index_dir required"
-        create_index(args.ns, args.data_dir, args.index_dir)
+        create_index(args.data_dir, args.ns, args.index_dir)
         return
 
     if args.do_query:
@@ -179,8 +179,8 @@ def main(args):
         assert args.query_text, "--query_text"
         assert args.query_limit, "--query_limit"
         search_index(
-            args.ns,
             args.data_dir,
+            args.ns,
             args.query_text,
             int(args.query_limit),
             args.query_highlight,
