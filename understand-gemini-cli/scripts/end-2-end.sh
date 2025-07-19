@@ -39,3 +39,7 @@ python3 \
 echo "Building a full-text search index of git commit history"
 sh "$TOOLBOX_DIR/whoosh-git-history/scripts/index.sh" \
     --json_fn "$WORK_DIR/git-commit-history.json"
+
+echo "Querying a full-text search index of git commit history"
+sh "$TOOLBOX_DIR/whoosh-git-history/scripts/query.sh" \
+    --query_text "author:google.com"
