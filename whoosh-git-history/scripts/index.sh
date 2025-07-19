@@ -1,8 +1,8 @@
 #
-# Builds a full-text search index of files & content.
+# Building a full-text search index of git commit history.
 #
 # How to run:
-#   index.sh --index_dir "./my_secret_git_repo"
+#   index.sh --json_fn "./git-commit-history.json"
 #
 
 set -e

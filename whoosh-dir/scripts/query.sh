@@ -1,4 +1,6 @@
 #
+# Queries a full-text search index of all files in a folder tree.
+#
 # How to run:
 #   query.sh --query_text "Ultimate Question of Life, the Universe, and Everything"
 #
