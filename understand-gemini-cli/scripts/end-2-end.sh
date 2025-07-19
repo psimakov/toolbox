@@ -27,7 +27,7 @@ sh "$TOOLBOX_DIR/whoosh-dir/scripts/index.sh" \
 
 echo "Querying a full-text search index of files & content"
 sh "$TOOLBOX_DIR/whoosh-dir/scripts/query.sh" \
-    --query_text "You are an interactive CLI agent" \
+    --query_text "content:'You are an interactive CLI agent'" \
     --query_limit 1
 
 echo "Capturing git commit history"
