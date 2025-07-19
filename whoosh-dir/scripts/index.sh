@@ -2,7 +2,7 @@
 # Builds a full-text search index of files & content.
 #
 # How to run:
-#   index.sh --index_dir "./my_secret_git_repo"
+#   sh index.sh --index_dir "./my_secret_git_repo"
 #
 
 set -e

@@ -2,7 +2,7 @@
 # Building a full-text search index of git commit history.
 #
 # How to run:
-#   index.sh --json_fn "./git-commit-history.json"
+#   sh index.sh --json_fn "./git-commit-history.json"
 #
 
 set -e

@@ -133,7 +133,27 @@ def search_index(index_base_dir, ns, query_str, limit, query_highlight):
     index_dir = os.path.join(index_base_dir, ns)
     logger.info(f"Querying index at: {index_dir}")
 
-    raise Exception("Not Implemented")
+    ix = open_dir(index_dir)
+    with ix.searcher() as searcher:
+        logger.info(f"Searching for: {query_str}\n")
+
+        parser = QueryParser("content", schema=ix.schema)
+        query = parser.parse(query_str)
+
+        results = searcher.search(query, limit=limit)
+
+        logger.info(f"Ready: results: {len(results)}, limit: {limit}\n")
+        for index, hit in enumerate(results):
+            logger.info(f"# Result {index} (score {hit.score:.3f})")
+
+            for part in [
+                "commit", "author", "timestamp", "message", "files"
+            ]:
+                item = hit[part]
+                if item:
+                    logger.info(f"{part}: {item}")
+
+            logger.info(f"")
 
 
 def parseargs():

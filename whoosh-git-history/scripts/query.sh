@@ -1,8 +1,8 @@
 #
-# Queries a full-text search index of all files in a folder tree.
+# Queries a full-text search index of git commit history.
 #
 # How to run:
-#   sh query.sh --query_text "Ultimate Question of Life, the Universe, and Everything"
+#   sh query.sh --query_text "author:bob message:'bug fix'"
 #
 
 set -e
