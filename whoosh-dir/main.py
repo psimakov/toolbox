@@ -46,8 +46,10 @@ class PlainFormatter(highlight.Formatter):
         return highlight.get_text(text, token, replace)
 
 
-def create_index(index_dir, docs_dir):
-    logger.info(f"Storing index at: {index_dir}")
+def create_index(ns, index_base_dir, docs_dir):
+    index_dir = os.path.join(index_base_dir, ns)
+    logger.info(f"Building index at: {index_dir}")
+
     if os.path.exists(index_dir):
         shutil.rmtree(index_dir)
     os.makedirs(index_dir, exist_ok=True)
@@ -108,8 +110,10 @@ def create_index(index_dir, docs_dir):
     logger.info(f"All non-text file extensions: {not_text_ext.keys()}")
 
 
-def search_index(index_dir, query_str, limit, query_highlight):
-    logger.info(f"Using index at: {index_dir}")
+def search_index(index_base_dir, query_str, limit, query_highlight):
+    index_dir = os.path.join(index_base_dir, ns)
+    logger.info(f"Querying index at: {index_dir}")
+
     ix = open_dir(index_dir)
     with ix.searcher() as searcher:
         logger.info(f"Searching for: {query_str}\n")
@@ -124,12 +128,12 @@ def search_index(index_dir, query_str, limit, query_highlight):
         logger.info(f"Ready: results: {len(results)}, limit: {limit}\n")
         for index, hit in enumerate(results):
             logger.info(f"# Result {index} (score {hit.score:.3f})")
-            
-            path = hit['path']
+
+            path = hit["path"]
             if path:
                 logger.info(f"File: {path}\n")
-            
-            content = hit.highlights('content')
+
+            content = hit.highlights("content")
             if content:
                 logger.info(f"Excerpt: {content}")
             logger.info(f"")
@@ -140,6 +144,7 @@ def parseargs():
         description="Simple Whoosh-based text indexer and search tool."
     )
 
+    parser.add_argument("--ns", default="noname", help="Namespace")
     parser.add_argument("--data_dir", help="Directory for index files")
 
     parser.add_argument("--do_index", action="store_true", help="Perform indexing")
@@ -161,11 +166,20 @@ def parseargs():
 
 def main(args):
     if args.do_index:
-        create_index(args.data_dir, args.index_dir)
+        assert args.ns, "--ns required"
+        assert args.data_dir, "--data_dir required"
+        assert args.data_dir, "--index_dir required"
+        create_index(args.ns, args.data_dir, args.index_dir)
         return
 
     if args.do_query:
+        assert args.ns, "--ns required"
+        assert args.data_dir, "--data_dir required"
+        assert args.data_dir, "--index_dir required"
+        assert args.query_text, "--query_text"
+        assert args.query_limit, "--query_limit"
         search_index(
+            args.ns,
             args.data_dir,
             args.query_text,
             int(args.query_limit),
