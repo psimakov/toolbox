@@ -116,6 +116,7 @@ def search_index(index_base_dir, ns, query_str, limit, query_highlight):
 
     ix = open_dir(index_dir)
     with ix.searcher() as searcher:
+        logger.info(f"Indexed documents: {searcher.doc_count()}")
         logger.info(f"Searching for: {query_str}\n")
 
         parser = QueryParser("content", schema=ix.schema)

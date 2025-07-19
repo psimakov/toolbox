@@ -27,7 +27,7 @@ import time
 from whoosh.index import create_in, open_dir
 from whoosh.fields import Schema, TEXT, ID, DATETIME
 from whoosh.analysis import StemmingAnalyzer
-from whoosh.qparser import QueryParser
+from whoosh.qparser import MultifieldParser
 from whoosh import highlight
 
 
@@ -135,9 +135,13 @@ def search_index(index_base_dir, ns, query_str, limit, query_highlight):
 
     ix = open_dir(index_dir)
     with ix.searcher() as searcher:
+        logger.info(f"Indexed documents: {searcher.doc_count()}")
         logger.info(f"Searching for: {query_str}\n")
 
-        parser = QueryParser("content", schema=ix.schema)
+        parser = MultifieldParser(
+            ["commit", "author", "message", "files"],
+            schema=ix.schema
+        )
         query = parser.parse(query_str)
 
         results = searcher.search(query, limit=limit)
