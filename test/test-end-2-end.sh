@@ -10,8 +10,10 @@
 set -e
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORK_DIR="$DIR/../work_dir"
-TOOLBOX_DIR="$DIR/../.."
+WORK_DIR="$DIR/work_dir"
+TOOLBOX_DIR="$DIR/.."
+
+echo "STARTED"
 
 echo "Cleaning folders"
 rm -rf "$WORK_DIR"
@@ -43,3 +45,5 @@ sh "$TOOLBOX_DIR/whoosh-git-history/scripts/index.sh" \
 echo "Querying a full-text search index of git commit history"
 sh "$TOOLBOX_DIR/whoosh-git-history/scripts/query.sh" \
     --query_text "author:google.com"
+
+echo "COMPLETED"
