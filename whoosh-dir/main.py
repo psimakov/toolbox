@@ -77,32 +77,37 @@ def create_index(index_base_dir, ns, docs_dir):
         )
 
     logger.info(f"Looking for files in: {docs_dir}")
-    for file in Path(docs_dir).rglob("*"):
-        if not file.is_file():
-            continue
+    
+    logger.info(f"Looking for files in: {docs_dir} (following symlinks)")
+    for root, _, files in os.walk(docs_dir, followlinks=True):
+        for filename in files:
+            file_path = os.path.join(root, filename)
+            file = Path(file_path)
+            if not file.is_file():
+                continue
 
-        if any(part in mime.SKIP_FOLDERS for part in file.parts):
-            excluded += 1
-            continue
+            if any(part in mime.SKIP_FOLDERS for part in file.parts):
+                excluded += 1
+                continue
 
-        if (indexed + not_text + too_large + errors) % 1000 == 0:
-            progress("\tProgress")
+            if (indexed + not_text + too_large + errors) % 1000 == 0:
+                progress("\tProgress")
 
-        if file.suffix.lower() not in mime.TEXT_EXTENSIONS:
-            not_text += 1
-            not_text_ext[file.suffix.lower()] = True
-            continue
-        if file.stat().st_size > MAX_SIZE:
-            too_large += 1
-            continue
-        try:
-            text = file.read_text(encoding="utf-8", errors="ignore")
-            relative_path = os.path.relpath(file, docs_dir)
-            writer.add_document(path=relative_path, content=text)
-            indexed += 1
-        except Exception as e:
-            logger.error(f"Error in {file}: {e}")
-            errors += 1
+            if file.suffix.lower() not in mime.TEXT_EXTENSIONS:
+                not_text += 1
+                not_text_ext[file.suffix.lower()] = True
+                continue
+            if file.stat().st_size > MAX_SIZE:
+                too_large += 1
+                continue
+            try:
+                text = file.read_text(encoding="utf-8", errors="ignore")
+                relative_path = os.path.relpath(file, docs_dir)
+                writer.add_document(path=relative_path, content=text)
+                indexed += 1
+            except Exception as e:
+                logger.error(f"Error in {file}: {e}")
+                errors += 1
 
     logger.info(f"Writing index...")
 
