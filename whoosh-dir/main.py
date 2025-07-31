@@ -77,8 +77,6 @@ def create_index(index_base_dir, ns, docs_dir):
         )
 
     logger.info(f"Looking for files in: {docs_dir}")
-    
-    logger.info(f"Looking for files in: {docs_dir} (following symlinks)")
     for root, _, files in os.walk(docs_dir, followlinks=True):
         for filename in files:
             file_path = os.path.join(root, filename)
